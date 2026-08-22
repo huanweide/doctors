@@ -1,0 +1,24 @@
+{
+  "name": "typedoctor",
+  "version": "1.0.0",
+  "description": "零依赖 TypeScript/JavaScript 类型纪律健康体检 CLI，给出 0-100 健康分 + CI 门禁",
+  "bin": {
+    "typedoctor": "./typedoctor.js"
+  },
+  "main": "typedoctor.js",
+  "scripts": {
+    "test": "node --test test.js"
+  },
+  "keywords": [
+    "typescript",
+    "lint",
+    "any",
+    "type-safety",
+    "ci",
+    "zero-dependency"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

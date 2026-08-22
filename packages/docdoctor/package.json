@@ -1,0 +1,25 @@
+{
+  "name": "docdoctor",
+  "version": "1.0.0",
+  "description": "零依赖单文件 Markdown 文档健康体检 CLI（死链接/锚点/标题结构/图片alt/裸URL/参考链接 + 健康分 + CI 门禁）",
+  "bin": {
+    "docdoctor": "index.js"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "markdown",
+    "docs",
+    "lint",
+    "health",
+    "doctor",
+    "cli",
+    "zero-dependency"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  }
+}

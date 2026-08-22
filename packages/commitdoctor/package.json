@@ -1,0 +1,20 @@
+{
+  "name": "commitdoctor",
+  "version": "1.0.0",
+  "description": "Zero-dependency git commit message hygiene scanner with health score and CI gate.",
+  "bin": {
+    "commitdoctor": "index.js"
+  },
+  "keywords": [
+    "git",
+    "commit",
+    "conventional-commits",
+    "ci",
+    "lint",
+    "zero-dependency"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

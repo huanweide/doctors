@@ -1,0 +1,33 @@
+{
+  "name": "pkgdoctor",
+  "version": "1.0.0",
+  "description": "零依赖单文件 package.json 配置卫生体检 CLI — 扫描元数据坏味道与依赖声明规范，给 0-100 健康分 + CI 门禁",
+  "license": "MIT",
+  "type": "commonjs",
+  "author": "huanweide",
+  "keywords": [
+    "package.json",
+    "lint",
+    "health-check",
+    "ci",
+    "zero-dependency",
+    "cli",
+    "engineering-health"
+  ],
+  "bin": {
+    "pkgdoctor": "index.js"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huanweide/pkgdoctor.git"
+  },
+  "scripts": {
+    "test": "node --test test.js"
+  },
+  "files": [
+    "index.js"
+  ]
+}

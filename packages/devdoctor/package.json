@@ -1,0 +1,25 @@
+{
+  "name": "devdoctor",
+  "version": "1.0.0",
+  "description": "零依赖单文件 Node CLI · 四维项目体检中心（bloat / license / cycles / secrets）",
+  "bin": {
+    "devdoctor": "index.js"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "cli",
+    "lint",
+    "license",
+    "security",
+    "dependencies",
+    "zero-dependency",
+    "supply-chain"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  }
+}

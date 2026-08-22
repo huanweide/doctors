@@ -1,0 +1,22 @@
+{
+  "name": "reldoctor",
+  "version": "1.0.0",
+  "description": "零依赖发布卫生体检 CLI：检查 version / git tag / CHANGELOG 三者一致性，附健康分与 CI 门禁",
+  "bin": {
+    "reldoctor": "index.js"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "release",
+    "semver",
+    "changelog",
+    "health",
+    "doctor",
+    "cli",
+    "zero-dependency"
+  ],
+  "license": "MIT"
+}

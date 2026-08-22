@@ -1,0 +1,25 @@
+name: doctors-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [16, 18, 20]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: 运行各 doctor 自检
+        run: |
+          for d in packages/*/; do
+            echo "=== $d ==="
+            (cd "$d" && node test.js) || exit 1
+          done

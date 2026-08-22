@@ -1,0 +1,16 @@
+{
+  "name": "repodoctor",
+  "version": "1.0.0",
+  "description": "零依赖 Git 仓库卫生体检 CLI：危险文件入库 / 密钥泄露 / 大文件 / LICENSE-README-锁文件卫生 / 提交与分支卫生",
+  "bin": {
+    "repodoctor": "index.js"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": ["git", "hygiene", "security", "cli", "zero-dependency", "code-health"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  }
+}

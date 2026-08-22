@@ -1,0 +1,30 @@
+{
+  "name": "doctors",
+  "version": "1.0.0",
+  "private": true,
+  "description": "代码健康体检全家桶 monorepo：a11y/web、commit、dev 四维、doc、pkg、rel、repo、type 八件套零依赖单文件 Node CLI。",
+  "bin": {
+    "doctors": "cli.js"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "doctors": "node cli.js",
+    "test": "node scripts/run-all-tests.js"
+  },
+  "keywords": [
+    "cli",
+    "linter",
+    "health-check",
+    "static-analysis",
+    "monorepo",
+    "zero-dependency",
+    "ci",
+    "engineering-health"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  }
+}

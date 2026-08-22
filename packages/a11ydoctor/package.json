@@ -1,0 +1,24 @@
+{
+  "name": "a11ydoctor",
+  "version": "1.0.0",
+  "description": "零依赖单文件 Web 可访问性静态扫描 CLI（HTML/JSX/Vue/Svelte → 严重度 + 健康分 + CI 门禁）",
+  "bin": {
+    "a11ydoctor": "index.js"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "a11y",
+    "accessibility",
+    "wcag",
+    "linter",
+    "cli",
+    "static-analysis"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  }
+}

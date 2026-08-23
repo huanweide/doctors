@@ -61,6 +61,11 @@ function parseArgs(argv) {
       opts.root = argv[++i];
       continue;
     }
+    if (!a.startsWith('-')) {
+      // 位置参数也当作扫描根（与 --root 等价），统一 doctors <sub> <path> 语法
+      opts.root = a;
+      continue;
+    }
     process.stderr.write(`未知标志：${a}\n`);
     process.exit(2);
   }

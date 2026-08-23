@@ -60,13 +60,15 @@ npx typedoctor ./lib --json
 ```bash
 doctors a11y   ./src/index.jsx
 doctors commit .
-doctors dev    .
+doctors dev    doctor .   # dev 需先选子模式：bloat | license | cycles | secrets | doctor
 doctors doc    ./docs
 doctors pkg    .
-doctors rel    .
+doctors rel    .          # 也支持 --root <dir>
 doctors repo   .
-doctors type   ./lib --json
+doctors type   ./lib --json   # 也支持 --root <dir>
 ```
+
+> 所有子命令默认扫描「当前目录」，可传一个位置参数指定目录（如 `doctors repo ../my-project`）。
 
 每个子命令支持的参数（如 `--json`、`--fail-on-high`、`--max-issues`）与其独立仓库完全一致，详见各包 `packages/<name>/README.md`。
 

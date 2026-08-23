@@ -17,6 +17,13 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const PKGS_DIR = path.join(__dirname, 'packages');
+const VERSION = (() => {
+  try {
+    return require('./package.json').version;
+  } catch {
+    return '1.0.0';
+  }
+})();
 
 const SUBCOMMANDS = {
   a11y: 'a11ydoctor',
@@ -42,9 +49,12 @@ const DESCRIPTIONS = {
 
 function printHelp() {
   console.log('');
-  console.log('doctors —— 代码健康体检全家桶（八件套零依赖 CLI）');
+  console.log('doctors v' + VERSION + ' —— 代码健康体检全家桶（八件套零依赖 CLI）');
   console.log('');
-  console.log('用法:  doctors <subcommand> [args...]');
+  console.log('用法:  doctors <subcommand> [target] [options]');
+  console.log('');
+  console.log('说明:  所有子命令默认扫描「当前目录」，可传一个位置参数指定目录；');
+  console.log('       rel / type 同时支持 --root <dir>；dev 需先选子模式。');
   console.log('');
   console.log('子命令:');
   for (const key of Object.keys(SUBCOMMANDS)) {
@@ -52,15 +62,23 @@ function printHelp() {
   }
   console.log('');
   console.log('示例:');
-  console.log('  doctors a11y  ./src');
-  console.log('  doctors repo  .');
-  console.log('  doctors type  ./lib --json');
+  console.log('  doctors a11y   ./src                # Web 可访问性扫描');
+  console.log('  doctors repo   .                    # Git 仓库卫生');
+  console.log('  doctors type   ./lib --json         # 类型纪律体检');
+  console.log('  doctors dev    doctor .             # 四维体检（先选子模式）');
+  console.log('  doctors rel    .        (或 --root .)');
+  console.log('  doctors --version                    # 查看版本');
   console.log('');
 }
 
 function main() {
   const sub = process.argv[2];
   const rest = process.argv.slice(3);
+
+  if (sub === '--version' || sub === '-V') {
+    console.log('doctors v' + VERSION);
+    process.exit(0);
+  }
 
   if (!sub || sub === '--help' || sub === '-h' || sub === 'help') {
     printHelp();

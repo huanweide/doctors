@@ -265,6 +265,9 @@ function parseArgs(argv) {
       if (v === undefined || !Number.isFinite(num)) throw new Error('missing or invalid number for ' + a);
       const key = a.replace(/^--/, '').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
       opts[key] = num;
+    } else if (!a.startsWith('--')) {
+      // 位置参数也当作扫描根（与 --root 等价），统一 doctors <sub> <path> 语法
+      opts.root = a;
     } else {
       throw new Error('unknown flag: ' + a);
     }

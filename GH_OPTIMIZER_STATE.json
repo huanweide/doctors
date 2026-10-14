@@ -1,0 +1,84 @@
+{
+  "repo": "huanweide/doctors",
+  "owner": "huanweide",
+  "round": 1,
+  "lastOptimized": "2026-10-14",
+  "status": "optimized",
+  "baseline_commit": "f57cf17",
+  "survivalVerdict": "keep",
+  "direction": "单点深度特化：CI 门禁真实性 + dogfood 自举闭环（让『八件套体检全家桶』真的敢当门禁用）",
+  "decisionLog": [
+    {
+      "date": "2026-10-14",
+      "survival": "keep",
+      "reason": "检索同类：ESLint(3万+star)、SonarQube、CodeFactor、oxlint、JSLint(3657star) 在通用规则/配置生态上碾压级领先，正面硬拼必输。但它们要么需要装依赖与配置（oxlint 要 Rust 工具链、ESLint 要配置与插件树），要么只做风格不做工程卫生分层。本仓的独特定位是『零依赖、零配置、单文件、离线、只读、确定性』的工程卫生分层体检，且已把八个子维度收成一个入口——这是主流工具不提供的形态。保留并把『门禁可信度』这一唯一卖点做到极致（这是家族 23 仓的通病，也是门槛最低的真价值点）。",
+      "alternativesRejected": [
+        "转向通用 linter 赛道（ESLint/SonarQube 地盘）：碾压级劣势，否决",
+        "废弃整个家族（23 仓同质化 0-star）：本仓作为门面仍是最优聚合点，废弃会连带 8 个已投入的子工具归零，否决",
+        "仅改 README 提升 star：不解决任何真问题，属于典型小农主义，否决"
+      ]
+    },
+    {
+      "date": "2026-10-14",
+      "finding": "P0 · dogfood 自指死锁（真 bug，非文档问题）",
+      "detail": "repodoctor 扫描自己的单测文件时，把单测里为验证检测规则而构造的假 key（AWS key id / GitHub token / PEM 私钥头形状）判为真密钥泄露：3 条 HIGH，自身健康分 58/100。这让『拿体检工具体检自己』自举不可能成立，也是全家族 23 仓共有的通病。",
+      "fix": "新增 KNOWN_FALSE_POSITIVES 精确路径豁免表 + 三条设计约束：(1) 只按精确文件路径豁免，禁止通配符/目录（防止整目录被开洞）；(2) 命中降级为 low 并在输出与 JSON 中留痕，绝不隐藏；(3) 历史扫描按 diff --git 切块，豁免文件的整块历史剔除，同时对『仅出现于豁免文件的历史』降级为 low。随后按实测修正了 git log -p 切块的 off-by-one（最后一条 diff 正文会残留在收尾段）。",
+      "verification": "HIGH 3→0，健康分 58→85，rc=0。新增 3 项测试覆盖豁免机制，其中『同仓库内真key 仍必须报 HIGH』为安全底线断言。人工复验：存在豁免时，未豁免文件中的真 key 仍报 2条 HIGH。"
+    },
+    {
+      "date": "2026-10-14",
+      "finding": "P0 · README 里的 npx 安装命令全是死的",
+      "detail": "README 原文教用户 `npx a11ydoctor` / `npx repodoctor` / `npx typedoctor`，但实测 npm registry 上 a11ydoctor 与 repodoctor 根本不存在（404），typedoctor 更是 2024-11-24 被他人 unpublish 的同名包。这是转化漏斗上最致命的一处：新用户按文档第一步就失败。",
+      "fix": "改写安装章节为实测可用的路径（clone 后 node cli.js / node packages/<name>/index.js / npm link），并显式标注 npx 写法当前不可用及原因，避免用户再踩。npm link 已实测通过（doctors --help 全局可调用）。npx github: 一行写法因本机 github.com 直连不通而未实测成功，故在文档中加了「需本机能直连 GitHub」的前提说明。"
+    },
+    {
+      "date": "2026-10-14",
+      "finding": "P1 · 门禁参数名不统一，README 一句笼统描述会误导",
+      "detail": "README 称各子命令均支持 `--fail-on-high`，实测 a11ydoctor 用的是 `--fail-on high`（取值 high/any/none）、devdoctor 用 `--fail-on <mode>`，与其余六包的 `--fail-on-high` 写法不同。照抄会导致参数被当未知选项直接 exit 2。",
+      "fix": "新增逐包核对的门禁参数对照表，并明确「以 --help 输出为准」。"
+    },
+    {
+      "date": "2026-10-14",
+      "finding": "P1 · CI 只跑单元测试，入口链路完全没测（假门禁）",
+      "detail": "旧 CI 只执行 packages/*/test.js。若有人改坏 cli.js 的子命令映射表或某个包的 bin 路径，全部单测仍会全绿，但 `doctors repo .` 直接失效——恰好是这个仓库最不能坏的链路。",
+      "fix": "新增 scripts/smoke-cli.js（15 项断言：入口契约 / 八子命令逐个启动 / 参数转发），接入 CI；并新增独立 dogfood job，拿八件套体检自身仓库。CI 同时补 fetch-depth:0（commitdoctor/reldoctor 需要真实历史与tag，旧配置下这两项实际拿不到数据）。"
+    },
+    {
+      "date": "2026-10-14",
+      "finding": "P2 · 文档与结构缺陷",
+      "detail": "README 死链（引用不存在的「快速开始」章节）、License 与许可证章节重复且置于作者之前、目录结构漏 sponsor/、7/8 子包无 LICENSE 文件。",
+      "fix": "补真实「快速开始」章节（含 GitHub Actions 最小示例与非 git 目录行为说明）、合并重复许可章节、补目录结构条目、为 7 个子包补 LICENSE。"
+    },
+    {
+      "date": "2026-10-14",
+      "finding": "P2 · .gitignore 缺凭据类条目",
+      "detail": "原 .gitignore 仅 9 行，不含 .env / 私钥 / 云凭据 / npmrc 等。对一个专门做密钥泄露检测、且每天被 CI 扫描的仓库，自身不守凭据铁律是自相矛盾。",
+      "fix": "补齐标准凭据类模板条目。"
+    }
+  ],
+  "improvements": [
+    "P0 dogfood 自指死锁修复：repodoctor 新增精确路径假阳性豁免表（禁通配符、降级为 low 且留痕），并修正 git log -p 历史切块的 off-by-one；HIGH 3→0、健康分 58→85",
+    "P0 README 死安装路径修复：npx a11ydoctor/repodoctor/typedoctor 三条命令在 npm 上实测全为 404，改为实测可用的 clone + node + npm link 路径并标注原因",
+    "P1 新增 scripts/smoke-cli.js（15 项断言）守住 cli.js 入口链路，并接入 CI",
+    "P1 CI 新增独立 dogfood job 拿八件套体检自身；补 fetch-depth:0 让 git 类doctor 拿到真实历史",
+    "P1 README 新增逐包核对的门禁参数对照表（a11y/dev 与其余六包写法不一致，原描述会误导）",
+    "P2 README 修复死链「快速开始」、合并重复许可证章节、补目录结构 sponsor/",
+    "P2 为 7 个缺失 LICENSE 的子包补齐 MIT",
+    "P2 .gitignore 补齐凭据类标准模板"
+  ],
+  "selfReview": {
+    "mistakesMadeThisRun": [
+      "初判 commit/repo 在非 git 目录下 rc=0 静默放行 —— 实为测量错误：`rc=$?` 取的是管道末端 tail 的退出码，不是 node 的。改用不带管道直接测得真实 rc 为 1/2，退出码本来就是正确的。教训：凡验证退出码，禁止把被测命令放在管道里。",
+      "自己写的修复代码引入了新假阳性：注释里写出完整的示例 key 字面量，被自己的规则判为 HIGH。自指陷阱真实存在，已改为不写字面量并说明原因。"
+    ],
+    "mutationTesting": {
+      "script": "scripts/smoke-cli.js",
+      "mutantsInjected": 5,
+      "mutantsKilled": 5,
+      "note": "5/5 全部拦截（破坏子命令映射、bin 路径指向不存在文件、删除子命令映射、未知子命令静默 exit 0、改文案对照）。不做变异测试就敢信的门禁等于假门禁。"
+    },
+    "tendencyToWatch": "本轮我一度想把 23 个同族仓库逐个改 README 以提升 star，属于平均用力的典型表现。正确做法是先在门面（doctors）把通用机制做扎实，再考虑是否把同一套改动批量套用到家族其他成员。"
+  },
+  "pr": "见 GH_OPTIMIZER_STATE 同commit 记录的 PR 号",
+  "rollback": "本次为squash 单commit，一条 git revert 即可整体撤销"
+}

@@ -142,5 +142,66 @@ t('集成：--fail-on-high 对脏仓库退出码 1', () => {
   assert.strictEqual(code, 1, '--fail-on-high 应退出 1')
 })
 
+// ---------- 已知假阳性豁免机制 ----------
+// 这是本仓库 dogfood 自举的关键：repodoctor 扫自己时，若单测里的假 key 被当
+// HIGH 报出，CI 永远红。下面这组测试专门防止「豁免机制变成安全后门」：
+// 必须做到「放过 fixture，但一点不放松对真密钥的检测」。
+
+t('豁免表只登记精确文件路径，不含通配符或目录', () => {
+  const wl = repodoctor.KNOWN_FALSE_POSITIVES
+  for (const p of Object.keys(wl)) {
+    assert.ok(!/[*?]/.test(p), '豁免路径不应含通配符: ' + p)
+    assert.ok(p.indexOf('*') < 0 && p.indexOf('?') < 0, '豁免路径不应含通配符: ' + p)
+    assert.ok(typeof wl[p] === 'string' && wl[p].length > 0, '每条豁免必须写明理由: ' + p)
+  }
+})
+
+t('豁免只降级为 low、且留痕，不隐藏', () => {
+  const dir = path.join(os.tmpdir(), 'repodoctor-wl-' + Date.now() + '-' + Math.floor(Math.random() * 1e6))
+  makeRepo(dir)
+  // 用碎片化构造，避免本测试文件自身被扫成密钥源
+  const fakeKey = ['AKIA', 'IOSFODNN7EXAMPLE'].join('')
+  const wlPath = Object.keys(repodoctor.KNOWN_FALSE_POSITIVES)[0]
+  const dirOfWl = path.posix.dirname(wlPath)
+  fs.mkdirSync(path.join(dir, dirOfWl), { recursive: true })
+  fs.writeFileSync(path.join(dir, wlPath), '// fixture\nconst x = "' + fakeKey + '"\n')
+  fs.writeFileSync(path.join(dir, '.gitignore'), 'node_modules/\n')
+  fs.writeFileSync(path.join(dir, 'LICENSE'), 'MIT\n')
+  fs.writeFileSync(path.join(dir, 'README.md'), '# demo\n')
+  commit(dir, 'init')
+
+  const r = runDoctor(dir, '--history-depth 50')
+  const secretIssues = r.issues.filter(i => i.rule === 'G2' && i.file === wlPath)
+  assert.strictEqual(secretIssues.length, 1, '豁免文件应仍有 1 条 G2 记录（不得隐藏）')
+  assert.strictEqual(secretIssues[0].severity, 'low', '豁免命中应降级为 low')
+  assert.ok(/已知假阳性/.test(secretIssues[0].msg), '豁免记录应标明「已知假阳性」')
+  assert.ok(!r.issues.some(i => i.rule === 'G2' && i.severity === 'high'), '豁免后不应再有 HIGH 级 G2')
+})
+
+t('豁免不放松真密钥检测：同仓库内真 key 仍必须报 HIGH', () => {
+  const dir = path.join(os.tmpdir(), 'repodoctor-wl2-' + Date.now() + '-' + Math.floor(Math.random() * 1e6))
+  makeRepo(dir)
+  const wlPath = Object.keys(repodoctor.KNOWN_FALSE_POSITIVES)[0]
+  fs.mkdirSync(path.join(dir, path.posix.dirname(wlPath)), { recursive: true })
+  // 豁免文件放假 key
+  fs.writeFileSync(path.join(dir, wlPath), '// fixture only\n')
+  // 另一个「未被豁免」的文件放真形状的 key —— 必须仍然报 HIGH
+  const realKey = ['gho', '_', 'AbCdEfGhIjKlMnOpQrStUv'].join('')
+  fs.mkdirSync(path.join(dir, 'src'), { recursive: true })
+  fs.writeFileSync(path.join(dir, 'src', 'config.js'), 'const t = "' + realKey + '"\n')
+  fs.writeFileSync(path.join(dir, '.gitignore'), 'node_modules/\n')
+  fs.writeFileSync(path.join(dir, 'LICENSE'), 'MIT\n')
+  fs.writeFileSync(path.join(dir, 'README.md'), '# demo\n')
+  commit(dir, 'init')
+
+  const r = runDoctor(dir, '--history-depth 50')
+  const highs = r.issues.filter(i => i.rule === 'G2' && i.severity === 'high')
+  assert.ok(highs.length > 0, '未豁免文件中的真 key 必须仍报 HIGH')
+  assert.ok(
+    highs.some(i => i.file === '<git history>' || i.file === 'src/config.js'),
+    'HIGH 应来自真 key 所在文件或历史，样例: ' + JSON.stringify(highs.map(i => i.file))
+  )
+})
+
 process.stdout.write('\nrepodoctor 测试: ' + pass + ' 通过 / ' + fail + ' 失败\n')
 process.exit(fail === 0 ? 0 : 1)

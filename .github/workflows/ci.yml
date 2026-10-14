@@ -13,13 +13,35 @@ jobs:
         node: [18, 20, 22]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # commitdoctor / reldoctor 需要真实提交历史与 tag
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - name: 运行各 doctor 自检
-        run: |
-          for d in packages/*/; do
-            echo "=== $d ==="
-            (cd "$d" && node test.js) || exit 1
-          done
+      - name: 跑全部 doctor 自检
+        run: node scripts/run-all-tests.js
+      - name: 统一入口冒烟（每个子命令都必须能启动）
+        run: node scripts/smoke-cli.js
+
+  dogfood:
+    # 拿体检工具体检它自己的 monorepo：新增代码若引入自身规则不认的坏味道，
+    # 在这里就会被门禁拦下（dogfood 自举）。
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: docdoctor 体检自身 Markdown
+        run: node cli.js doc . --max-high 0
+      - name: pkgdoctor 体检自身 package.json
+        run: node cli.js pkg . --fail-on-high
+      - name: typedoctor 体检自身源码
+        run: node cli.js type ./packages --fail-on-high
+      - name: repodoctor 体检自身仓库（含 git 历史密钥扫描）
+        run: node cli.js repo . --min-score 70
+      - name: commitdoctor 体检最近提交消息
+        run: node cli.js commit . --max-commits 50

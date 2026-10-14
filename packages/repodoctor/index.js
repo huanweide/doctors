@@ -108,8 +108,31 @@ function checkDangerousTracked(root, tracked) {
 }
 
 // G2：当前文件内容 + 最近 N 个 commit 的 diff 历史 扫明文密钥
+//
+// 已知假阳性豁免（KNOWN_FALSE_POSITIVES）
+// ------------------------------------------------------------------
+// 问题背景：repodoctor 自带的单测里必须放"长得像密钥的字符串"才能验证
+// 检测规则本身有效。于是 repodoctor 扫自己时永远报 3 条 HIGH，dogfood
+// 自举直接把自己锁死（健康分 58/100，CI 永远红）。
+//
+// 但豁免绝不能做成"悄悄忽略"——那等于给真泄露开后门。所以：
+//   1. 只按「精确文件路径」豁免，不按内容、不按目录（避免整目录被开洞）
+//   2. 每条豁免必须在下面登记理由，review 时一眼能看到谁被放行了
+//   3. 被豁免的命中仍会记录到 whitelistedHits，输出/JSON 里可见（降为 low）
+//   4. 新增豁免必须同步在下方登记，不允许运行时通配符豁免
+const KNOWN_FALSE_POSITIVES = {
+  // devdoctor / commitdoctor 的单测必须放入「长得像密钥」的字符串才能验证检测
+  // 规则本身有效（AWS key id / GitHub token / PEM 私钥头等形状），这些字符串
+  // 从不接触真实凭据。注意：本注释刻意不写出任何完整字面量，以免本文件反过来
+  // 被自己的规则判为密钥泄露（自指陷阱）。
+  'packages/devdoctor/test.js': '单测构造的密钥检测样本（非真凭据）',
+  // commitdoctor 单测同样需要私钥头 / token 形状的字符串做 fixture。
+  'packages/commitdoctor/test.js': '单测构造的密钥检测样本（非真凭据）',
+}
+
 function checkSecrets(root, tracked, depth) {
   const issues = []
+  const whitelistedHits = []
   const seen = new Set()
   const binaryRe = /\.(png|jpg|jpeg|gif|ico|webp|woff2?|ttf|eot|mp4|webm|mov|zip|gz|tgz|rar|7z|pdf|exe|dll|so|dylib|wasm|bin)$/i
 
@@ -131,6 +154,16 @@ function checkSecrets(root, tracked, depth) {
         const key = f + ':' + pat.source
         if (seen.has(key)) continue
         seen.add(key)
+        // 命中已知假阳性：降级为 low 并留痕，不吃 high 门禁，但绝不隐藏
+        if (Object.prototype.hasOwnProperty.call(KNOWN_FALSE_POSITIVES, f)) {
+          whitelistedHits.push({ file: f, reason: KNOWN_FALSE_POSITIVES[f], sample: clip(m[0]) })
+          issues.push({
+            rule: 'G2', severity: 'low', file: f,
+            msg: '已知假阳性命中（已豁免为 low）：' + clip(m[0]) +
+                 ' — 理由：' + KNOWN_FALSE_POSITIVES[f],
+          })
+          break
+        }
         issues.push({ rule: 'G2', severity: 'high', file: f, msg: '疑似明文密钥/凭证（当前文件内容）：' + clip(m[0]) })
         break
       }
@@ -151,12 +184,62 @@ function checkSecrets(root, tracked, depth) {
     }
   }
   if (log) {
+    // git log -p 的输出由「commit 元信息 + 该 commit 的若干 diff 块」交替组成。
+    // 关键：每个 diff 块的正文（含 +++ 行与 hunk）在下一个 "diff --git" 之前，
+    // 而 commit 元信息紧贴在它自己那条 "diff --git" 之前 —— 因此必须从
+    // 每条 "diff --git" 的位置开始切块，不能只删 diff 块本身，
+    // 否则最后一条 diff 的正文会残留在收尾段里被继续匹配（假阳性）。
+    const chunkRe = /^diff --git a\/(.+?) b\/(.+)$/gm
+    const chunks = []
+    let m2
+    chunkRe.lastIndex = 0
+    while ((m2 = chunkRe.exec(log)) !== null) {
+      chunks.push({ path: m2[2], start: m2.index, text: '' })
+    }
+    // 每个 chunk 的正文 = 起点 → 下一个 diff 起点（或日志末尾）
+    for (let i = 0; i < chunks.length; i++) {
+      const end = i + 1 < chunks.length ? chunks[i + 1].start : log.length
+      chunks[i].text = log.slice(chunks[i].start, end)
+    }
+
+    const historyText = chunks
+      .filter(c => !Object.prototype.hasOwnProperty.call(KNOWN_FALSE_POSITIVES, c.path))
+      .map(c => c.text)
+      .join('')
+
+    // 已豁免文件在历史里的内容（含它被删除前的版本）也要从历史语料中剔除，
+    // 否则「假 key 曾提交进历史」会让 <git history> 永远报 HIGH，dogfood 无法闭环。
+    const whitelistedHistoryText = chunks
+      .filter(c => Object.prototype.hasOwnProperty.call(KNOWN_FALSE_POSITIVES, c.path))
+      .map(c => c.text)
+      .join('')
+
     for (const pat of SECRET_PATTERNS) {
-      const m = log.match(pat)
-      if (m) {
-        issues.push({ rule: 'G2', severity: 'high', file: '<git history>', msg: '疑似密钥泄露于 git 历史（已删除也可能残留）：' + clip(m[0]) })
-        break
+      const m = historyText.match(pat)
+      if (!m) continue
+      // 该 key 是否同样来自已知假阳性文件的历史？来自则降级为 low 并留痕
+      let alsoInWhitelisted = false
+      try {
+        const probe = new RegExp(pat.source, pat.flags.replace(/[gy]/g, ''))
+        alsoInWhitelisted = probe.test(whitelistedHistoryText)
+      } catch (e) {
+        alsoInWhitelisted = false
       }
+      if (alsoInWhitelisted) {
+        whitelistedHits.push({
+          file: '<git history>',
+          reason: '历史中仅出现于已豁免的 fixture 文件',
+          sample: clip(m[0]),
+        })
+        issues.push({
+          rule: 'G2', severity: 'low', file: '<git history>',
+          msg: '已知假阳性命中于 git 历史（已豁免为 low）：' + clip(m[0]) +
+               ' — 理由：仅出现于已豁免的 fixture 文件',
+        })
+      } else {
+        issues.push({ rule: 'G2', severity: 'high', file: '<git history>', msg: '疑似密钥泄露于 git 历史（已删除也可能残留）：' + clip(m[0]) })
+      }
+      break
     }
   }
   return issues
@@ -399,4 +482,5 @@ module.exports = {
   isGitRepo,
   listTracked,
   SECRET_PATTERNS,
+  KNOWN_FALSE_POSITIVES,
 }

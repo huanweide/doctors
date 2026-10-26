@@ -1,0 +1,32 @@
+{
+  "name": "chaineye",
+  "version": "1.0.0",
+  "description": "零依赖单文件 Node CLI：构建仓库 import 图谱，回答「改了 X，谁会受影响」",
+  "private": false,
+  "bin": {
+    "chaineye": "index.js"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test.js"
+  },
+  "keywords": [
+    "dependency-graph",
+    "impact-analysis",
+    "static-analysis",
+    "refactoring",
+    "cli",
+    "zero-dependency",
+    "code-health",
+    "ci"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

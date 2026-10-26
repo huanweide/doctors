@@ -1,0 +1,29 @@
+{
+  "name": "licguard",
+  "version": "1.0.0",
+  "description": "零依赖 Node CLI：扫描 node_modules 依赖许可证，识别 GPL/AGPL 强 copyleft 与未知许可，可进 CI 做合规门禁。",
+  "private": false,
+  "bin": {
+    "licguard": "index.js"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test.js"
+  },
+  "keywords": [
+    "cli",
+    "zero-dependency",
+    "code-health",
+    "static-analysis",
+    "ci"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "dupscan",
+  "version": "1.1.0",
+  "description": "Zero-dependency duplicate code block detector for JS/TS, with a gate that tells you when it cannot conclude (code-health family 8th axis).",
+  "private": false,
+  "bin": {
+    "dupscan": "index.js"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/unit.test.js && node test/smoke-cli.js",
+    "lint": "node --check index.js && node --test"
+  },
+  "keywords": [
+    "duplicate",
+    "code",
+    "duplication",
+    "static-analysis",
+    "cli",
+    "zero-dependency",
+    "code-health",
+    "ci"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  }
+}

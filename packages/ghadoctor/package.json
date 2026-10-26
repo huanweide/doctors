@@ -1,0 +1,37 @@
+{
+  "name": "ghadoctor",
+  "version": "1.0.0",
+  "description": "零依赖单文件 Node CLI：GitHub Actions 配置卫生体检（family 第18轴·CI 配置卫生）",
+  "private": false,
+  "bin": {
+    "ghadoctor": "index.js"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test.js && node test/smoke-cli.js"
+  },
+  "keywords": [
+    "ci",
+    "ci-cd",
+    "cli",
+    "code-quality",
+    "devops",
+    "github-actions",
+    "lint",
+    "nodejs",
+    "security",
+    "static-analysis",
+    "yaml",
+    "zero-dependency",
+    "code-health"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

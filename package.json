@@ -1,8 +1,8 @@
 {
   "name": "doctors",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "代码健康体检全家桶 monorepo：a11y/web、commit、dev 四维、doc、pkg、rel、repo、type 八件套零依赖单文件 Node CLI。",
+  "description": "代码健康体检全家桶 monorepo：21 根零依赖单文件 Node CLI（a11y / commit / dev / doc / pkg / rel / repo / type 八核 + sec / cyc / dup / lit / debug / debt / await / chain / gha / lic / idiot / test / eng 十三散轴归位），统一入口 + 严重度 + 健康分 + 门禁三态 CI。",
   "bin": {
     "doctors": "cli.js"
   },
@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "doctors": "node cli.js",
-    "test": "node scripts/run-all-tests.js"
+    "test": "node scripts/run-all-tests.js",
+    "smoke": "node scripts/smoke-cli.js"
   },
   "keywords": [
     "cli",
@@ -21,10 +22,15 @@
     "monorepo",
     "zero-dependency",
     "ci",
-    "engineering-health"
+    "engineering-health",
+    "security",
+    "complexity",
+    "duplication",
+    "technical-debt",
+    "license-compliance"
   ],
   "license": "MIT",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   }
 }

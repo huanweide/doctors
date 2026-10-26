@@ -1,0 +1,34 @@
+{
+  "name": "debugdoctor",
+  "version": "1.1.0",
+  "description": "Zero-dependency debug/log residue detector for JS/TS/Python/Go, with a CI gate that tells you when it cannot conclude (code-health family axis 6).",
+  "private": false,
+  "bin": {
+    "debugdoctor": "index.js"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/unit.test.js && node test/smoke-cli.js",
+    "lint": "node --check index.js && node --test"
+  },
+  "keywords": [
+    "debug",
+    "debugger",
+    "console",
+    "logging",
+    "cli",
+    "static-analysis",
+    "zero-dependency",
+    "ci",
+    "code-health"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  }
+}

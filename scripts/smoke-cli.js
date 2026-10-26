@@ -22,8 +22,12 @@ const { spawnSync } = require('child_process');
 const ROOT = path.join(__dirname, '..');
 const CLI = path.join(ROOT, 'cli.js');
 
-// 必须与 cli.js 的 SUBCOMMANDS 保持一致
-const EXPECTED_SUBS = ['a11y', 'commit', 'dev', 'doc', 'pkg', 'rel', 'repo', 'type'];
+// 必须与 cli.js 的 SUBCOMMANDS 保持一致（21 轴）
+const EXPECTED_SUBS = [
+  'a11y', 'commit', 'dev', 'doc', 'pkg', 'rel', 'repo', 'type',
+  'sec', 'cyc', 'dup', 'lit', 'debug', 'debt', 'await', 'chain',
+  'gha', 'lic', 'idiot', 'test', 'eng',
+];
 
 let failed = 0;
 let passed = 0;
@@ -90,22 +94,33 @@ console.log('# 1. 入口契约');
   else bad('未知子命令 exit 2', 'status=' + r.status);
 }
 
-console.log('\n# 2. 八个子命令逐个启动');
+console.log('\n# 2. 21 个子命令逐个启动');
 
 // 帮助文本里必须列出全部子命令（防止 SUBCOMMANDS 被误删）
 {
   const r = run([]);
   const missing = EXPECTED_SUBS.filter(s => !new RegExp('^\\s+' + s + '\\s', 'm').test(r.stdout));
-  if (missing.length === 0) ok('帮助文本包含全部 8 个子命令');
-  else bad('帮助文本包含全部 8 个子命令', '缺失: ' + missing.join(', '));
+  if (missing.length === 0) ok('帮助文本包含全部 ' + EXPECTED_SUBS.length + ' 个子命令');
+  else bad('帮助文本包含全部 ' + EXPECTED_SUBS.length + ' 个子命令', '缺失: ' + missing.join(', '));
 }
 
 const tmpRepo = makeTempGitRepo();
 
+// 各轴的调用形态并不统一（有的吃位置参数，有的必须先选子模式、再用 --root）。
+// 这里逐轴钉死正确姿势——顺便当 README 轴索引表命令列的活文档。
+function argsFor(sub) {
+  if (sub === 'a11y') return [sub, ROOT];
+  if (sub === 'dev') return [sub, 'doctor', tmpRepo];
+  if (sub === 'cyc') return [sub, 'scan', '--root', tmpRepo];
+  if (sub === 'debt') return [sub, 'doctor', '--root', tmpRepo];
+  if (sub === 'await') return [sub, 'scan', '--root', tmpRepo];
+  if (sub === 'test') return [sub, 'doctor', '--root', tmpRepo];
+  return [sub, tmpRepo];
+}
+
 try {
   for (const sub of EXPECTED_SUBS) {
-    // a11y 必须显式给路径；其余默认扫当前目录
-    const args = sub === 'a11y' ? [sub, ROOT] : [sub, tmpRepo];
+    const args = argsFor(sub);
     const r = run(args);
     const out = (r.stdout || '') + (r.stderr || '');
 

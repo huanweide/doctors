@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-label="doctors">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1020"/>
+      <stop offset="0.55" stop-color="#0d1830"/>
+      <stop offset="1" stop-color="#070a14"/>
+    </linearGradient>
+    <linearGradient id="pulse" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#58e08a"/>
+      <stop offset="1" stop-color="#6ea8ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="320" fill="url(#bg)"/>
+
+  <!-- 图标：医疗十字 + 心电图脉冲 -->
+  <g transform="translate(160,160)">
+    <circle cx="0" cy="0" r="66" fill="#58e08a12" stroke="#2f4a7a" stroke-width="3"/>
+    <g stroke="url(#pulse)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M -46 8 L -30 8 L -22 -22 L -8 34 L 2 -6 L 12 8 L 46 8"/>
+    </g>
+    <g fill="#58e08a">
+      <rect x="-11" y="-52" width="22" height="7" rx="3.5"/>
+      <rect x="-11" y="45" width="22" height="7" rx="3.5"/>
+    </g>
+  </g>
+
+  <text x="300" y="152" fill="#e8eefc" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="88" font-weight="800">doc<tspan fill="#58e08a">tors</tspan></text>
+  <text x="304" y="208" fill="#c4d2ee" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="28">代码健康体检全家桶 — 21 轴零依赖单文件 CLI</text>
+
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" fill="#aecbff">
+    <rect x="304" y="236" width="230" height="44" rx="22" fill="#6ea8ff1a" stroke="#2f4a7a"/>
+    <text x="326" y="264">21 个体检轴</text>
+    <rect x="554" y="236" width="230" height="44" rx="22" fill="#6ea8ff1a" stroke="#2f4a7a"/>
+    <text x="576" y="264">零依赖 · 可离线</text>
+    <rect x="804" y="236" width="270" height="44" rx="22" fill="#6ea8ff1a" stroke="#2f4a7a"/>
+    <text x="826" y="264">门禁三态 · 不谎报</text>
+  </g>
+</svg>

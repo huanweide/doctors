@@ -1,0 +1,38 @@
+{
+  "name": "debtlens",
+  "version": "1.1.0",
+  "description": "零依赖单文件 Node CLI · 技术债密度扫描器（注释锚定降误报 + 严重度加权健康分 + 门禁三态 CI 门禁）",
+  "private": false,
+  "bin": {
+    "debtlens": "index.js"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/unit.test.js && node test/smoke-cli.js",
+    "test:unit": "node test/unit.test.js",
+    "test:smoke": "node test/smoke-cli.js",
+    "dogfood": "node index.js --root . --json --max-total 400"
+  },
+  "keywords": [
+    "cli",
+    "tech-debt",
+    "todo",
+    "fixme",
+    "health",
+    "zero-dependency",
+    "ci",
+    "lint",
+    "tech-debt-density",
+    "code-health",
+    "static-analysis"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  }
+}

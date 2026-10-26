@@ -45,3 +45,7 @@ jobs:
         run: node cli.js repo . --min-score 70
       - name: commitdoctor 体检最近提交消息
         run: node cli.js commit . --max-commits 50
+      - name: debugdoctor 体检自身源码（生产代码零 debugger）
+        run: node cli.js debug ./packages --max-high 0
+      - name: chaineye 体检自身依赖图（零循环依赖）
+        run: node cli.js chain . --max-cycles 0

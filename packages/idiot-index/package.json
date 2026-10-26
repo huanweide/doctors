@@ -1,0 +1,34 @@
+{
+  "name": "idiot-index",
+  "version": "1.0.0",
+  "description": "白痴指数：一键量化你的项目有多「胖」——可被原生 API 替代的依赖 + 过度工程分数。零依赖、可进 CI。",
+  "private": false,
+  "bin": {
+    "idiot-index": "index.js"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test.js",
+    "start": "node index.js ."
+  },
+  "keywords": [
+    "cli",
+    "lint",
+    "dependencies",
+    "minimalism",
+    "code-quality",
+    "ci",
+    "zero-dependency",
+    "code-health",
+    "static-analysis"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

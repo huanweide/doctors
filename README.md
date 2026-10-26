@@ -1,3 +1,13 @@
+<!-- badges -->
+[![License](https://img.shields.io/github/license/huanweide/doctors)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/huanweide/doctors)](https://github.com/huanweide/doctors/stargazers)
+[![Engineering Health Family](https://img.shields.io/badge/Engineering%20Health%20Family-18%20axes-22c55e)](https://github.com/huanweide/family-showcase)
+<!-- /badges -->
+
+> **English**: A monorepo of 8 zero-dependency, offline, single-file Node CLIs that health-check your code across the whole dev lifecycle — severity + 0–100 health score + CI gate, behind one `doctors` entrypoint.
+
+**🔧 Part of the [Engineering Health Family](https://github.com/huanweide/family-showcase)** (18 zero-dependency checkup axes). This repo is the **monorepo hub**: the canonical `doctors` CLI + the 8 core doctors. See also [enghealth](https://github.com/huanweide/enghealth) (unified runner) and [family-showcase](https://github.com/huanweide/family-showcase) (18-axis panorama).
+
 # doctors · 代码健康体检全家桶
 
 八个零依赖、单文件、可离线运行的 Node CLI，覆盖软件开发全链路的「健康体检 + 严重度 + 0-100 健康分 + CI 门禁」。原本是八个独立小仓库，现统一收进这个 monorepo，共享一个入口 `doctors` 与各包的独立 `npx` 调用。

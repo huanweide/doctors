@@ -216,7 +216,7 @@ ALL DOCTORS PASSED (21/21 packages)
 ### 已归位的散轴仓
 
 `secscan / cycscan / dupscan / litdoctor / ghadoctor / debugdoctor / debtlens / awaitscan / chaineye / enghealth / idiot-index / licguard / testlite`
-十三个原独立仓库已整体并入本 monorepo 的 `packages/`，原件逐字节搬入、保留零依赖单文件本色；各原仓库已停止维护，新改动一律进这里。
+十三个原独立仓库已整体并入本 monorepo 的 `packages/`，原件逐字节搬入、保留零依赖单文件本色；各原仓库现已归档（archived，只读），代码保留作历史参考，新改动一律进这里。
 
 ## CLI 命令速查
 

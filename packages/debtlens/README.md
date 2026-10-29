@@ -150,7 +150,7 @@ MIT © huanweide
 
 ## 作者
 
-由 **ReTr · 樊斯瑞** 维护 · [GitHub 主页](https://github.com/huanweide)
+由 **ReTr · huanweide** 维护 · [GitHub 主页](https://github.com/huanweide)
 
 ## 开发与测试
 
@@ -164,9 +164,6 @@ npm test                   # 等价于依次跑上面两个
 
 两层测试的分工是刻意的：单测只覆盖导出的纯函数，**完全不碰 `process.exitCode`**；退出码契约只能由 `spawn-cli.js` 用 `spawnSync` 真起进程来验。改退出码时单测可能依然全绿，只有冒烟能拦住。
 
-## 赞助支持
-
-如果这个项目帮到了你，欢迎 [点 Star](https://github.com/huanweide/debtlens) 支持；也可微信扫码自愿赞助（收款码见 `sponsor/wechat-qr.png`，作者本人带 Tri 水印的码，纯静态图片、不含任何密钥）。
 
 ## 许可证
 

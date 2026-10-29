@@ -336,6 +336,5 @@ MIT · © huanweide — 详见 [LICENSE](LICENSE)。
 
 21 根轴、零依赖、可离线。如果它帮你拦下过一次问题提交，欢迎 [点个 Star](https://github.com/huanweide/doctors) —— 这是本项目唯一要的增长指标。
 
-由 **ReTr · 樊斯瑞** 维护 · [GitHub 主页](https://github.com/huanweide) · [赞助支持](sponsor/wechat-qr.png)
 
 ← [回到代码健康家族总览](https://github.com/huanweide/family-showcase)

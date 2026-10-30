@@ -53,7 +53,7 @@ $ node cli.js cyc scan --root ./packages/litdoctor
 
 ## 它能做什么
 
-一次命令看全局——`eng` 轴是家族**元仪表盘**，把散落的轴聚成一张体检表、一个总分：
+一次命令看全局——`eng` 轴是**工程健康家族**（一组零依赖代码体检工具的集合）的元仪表盘，把散落的轴聚成一张体检表、一个总分：
 
 ```console
 $ node cli.js eng . --tools-dir ./packages

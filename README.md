@@ -10,7 +10,7 @@
   <img src="assets/banner.svg" alt="doctors" width="640">
 </p>
 
-> **English**: One repo, 21 zero-dependency offline single-file Node CLIs that health-check your code — severity + 0–100 score + **three-state CI gate** (pass / fail / **inconclusive**), behind a single `doctors` entrypoint.
+**English** · [README_EN.md](./README_EN.md)
 
 **🩺 doctors · 代码健康体检全家桶** —— 别人给你「绿灯」，我们给你**可信的结论**：21 个体检轴共用一个入口，零依赖、可离线、只读不改写；**没配门禁阈值就明说 inconclusive，绝不拿绿灯骗你**。
 
